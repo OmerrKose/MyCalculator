@@ -48,11 +48,11 @@ class MainActivity : AppCompatActivity() {
     fun onEqual(view: View) {
         if (lastNumeric) {
             var tvValue = tvInput.text.toString()
-            var prefix  = ""
+            var prefix = ""
 
             try {
                 // If the value is negative than store sign to use later
-                if(tvValue.startsWith("-")){
+                if (tvValue.startsWith("-")) {
                     prefix = "-"
                     tvValue = tvValue.substring(1) // Parse after the sign
                 }
@@ -63,11 +63,44 @@ class MainActivity : AppCompatActivity() {
                     var one = splitValue[0]
                     var two = splitValue[1]
 
-                    if (prefix.isNotEmpty()){
+                    if (prefix.isNotEmpty()) {
                         one = prefix + one // Add the sign to the parsed value
                     }
 
-                    tvInput.text = (one.toDouble() - two.toDouble()).toString()
+                    tvInput.text = removeZeroAfterDot((one.toDouble() - two.toDouble()).toString())
+                } else if (tvValue.contains("*")) {
+                    val splitValue = tvValue.split("*")
+
+                    var one = splitValue[0]
+                    var two = splitValue[1]
+
+                    if (prefix.isNotEmpty()) {
+                        one = prefix + one // Add the sign to the parsed value
+                    }
+
+                    tvInput.text = removeZeroAfterDot((one.toDouble() * two.toDouble()).toString())
+                } else if (tvValue.contains("+")) {
+                    val splitValue = tvValue.split("+")
+
+                    var one = splitValue[0]
+                    var two = splitValue[1]
+
+                    if (prefix.isNotEmpty()) {
+                        one = prefix + one // Add the sign to the parsed value
+                    }
+
+                    tvInput.text = removeZeroAfterDot((one.toDouble() + two.toDouble()).toString())
+                } else if (tvValue.contains("/")) {
+                    val splitValue = tvValue.split("/")
+
+                    var one = splitValue[0]
+                    var two = splitValue[1]
+
+                    if (prefix.isNotEmpty()) {
+                        one = prefix + one // Add the sign to the parsed value
+                    }
+
+                    tvInput.text = removeZeroAfterDot((one.toDouble() / two.toDouble()).toString())
                 }
 
             } catch (e: ArithmeticException) {
@@ -76,11 +109,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun removeZeroAfterDot(result: String): String {
+        var value = result
+        if (value.contains(".0"))
+            value = result.substring(0, result.length - 2)
+
+        return value
+    }
+
     private fun isOperatorAdded(value: String): Boolean {
         return if (value.startsWith("-")) {
             false
-        }
-        else {
+        } else {
             value.contains("/") || value.contains("*") ||
                     value.contains("+") || value.contains("-")
         }
